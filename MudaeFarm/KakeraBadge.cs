@@ -1,0 +1,30 @@
+namespace MudaeFarm
+{
+    public enum KakeraBadge
+    {
+        Bronze1,
+        Bronze2,
+        Bronze3,
+        Bronze4,
+        Silver1,
+        Silver2,
+        Silver3,
+        Silver4,
+        Gold1,
+        Gold2,
+        Gold3,
+        Gold4,
+        Sapphire1,
+        Sapphire2,
+        Sapphire3,
+        Sapphire4,
+        Ruby1,
+        Ruby2,
+        Ruby3,
+        Ruby4,
+        Emerald1,
+        Emerald2,
+        Emerald3,
+        Emerald4
+    }
+}
