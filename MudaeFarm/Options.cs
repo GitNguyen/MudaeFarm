@@ -73,6 +73,18 @@ namespace MudaeFarm
         [JsonProperty("daily_kakera_command")]
         public string DailyKakeraCommand { get; set; } = "$dk";
 
+        [JsonProperty("pokemon_enabled")]
+        public bool PokemonEnabled { get; set; }
+
+        [JsonProperty("pokemon_command")]
+        public string PokemonCommand { get; set; } = "$p";
+
+        [JsonProperty("daily_vote_enabled")]
+        public bool DailyVoteEnabled { get; set; }
+
+        [JsonProperty("daily_vote_command")]
+        public string DailyVoteCommand { get; set; } = "$daily";
+
         [JsonProperty("typing_delay_seconds")]
         public double TypingDelaySeconds { get; set; } = 0.3;
 
@@ -84,6 +96,12 @@ namespace MudaeFarm
 
         [JsonProperty("daily_kakera_wait_hours")]
         public int DailyKakeraWaitHours { get; set; } = 20;
+
+        [JsonProperty("pokemon_wait_hours")]
+        public int PokemonWaitHours { get; set; } = 2;
+
+        [JsonProperty("daily_vote_wait_hours")]
+        public int DailyVoteWaitHours { get; set; } = 20;
     }
 
     public class CharacterWishlist

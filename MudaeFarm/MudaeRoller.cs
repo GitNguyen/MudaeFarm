@@ -118,7 +118,7 @@ namespace MudaeFarm
                 return;
             }
 
-            await Task.WhenAll(RunRollAsync(client, channel, cancellationToken), RunDailyKakeraAsync(channel, cancellationToken));
+            await Task.WhenAll(RunRollAsync(client, channel, cancellationToken), RunDailyKakeraAsync(channel, cancellationToken), RunPokemonAsync(channel, cancellationToken), RunDailyVoteAsync(channel, cancellationToken));
         }
 
         async Task RunRollAsync(DiscordClient client, IMessageChannel channel, CancellationToken cancellationToken = default)
@@ -153,7 +153,7 @@ namespace MudaeFarm
                 {
                     _logger.LogWarning(e, $"Could not roll '{options.Command}' in {logPlace}.");
 
-                    await Task.Delay(TimeSpan.FromMinutes(30), cancellationToken);
+                    await Task.Delay(TimeSpan.FromMinutes(15), cancellationToken);
                     continue;
                 }
 
@@ -214,7 +214,7 @@ namespace MudaeFarm
 
                 if (!options.DailyKakeraEnabled)
                 {
-                    await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
+                    await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
                     continue;
                 }
 
@@ -233,7 +233,7 @@ namespace MudaeFarm
                 {
                     _logger.LogWarning(e, $"Could not roll daily kakera in {logPlace}.");
 
-                    await Task.Delay(TimeSpan.FromMinutes(30), cancellationToken);
+                    await Task.Delay(TimeSpan.FromMinutes(15), cancellationToken);
                     continue;
                 }
 
@@ -249,6 +249,102 @@ namespace MudaeFarm
                 _logger.LogInformation($"Claimed daily kakera in {logPlace}.");
 
                 await Task.Delay(TimeSpan.FromHours(options.DailyKakeraWaitHours), cancellationToken);
+            }
+        }
+
+        async Task RunPokemonAsync(IMessageChannel channel, CancellationToken cancellationToken = default)
+        {
+            var logPlace = $"channel '{channel.Name}' ({channel.Id})";
+
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                var options = _options.CurrentValue;
+
+                if (!options.PokemonEnabled)
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
+                    continue;
+                }
+
+                IUserMessage response;
+
+                try
+                {
+                    using (channel.Typing())
+                    {
+                        await Task.Delay(TimeSpan.FromSeconds(options.TypingDelaySeconds), cancellationToken);
+
+                        response = await _commandHandler.SendAsync(channel, options.PokemonCommand, cancellationToken);
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.LogWarning(e, $"Could not roll pokemon in {logPlace}.");
+
+                    await Task.Delay(TimeSpan.FromMinutes(15), cancellationToken);
+                    continue;
+                }
+
+                if (_outputParser.TryParseTime(response.Content, out var resetTime))
+                {
+                    _logger.LogInformation($"Could not claim pokemon in {logPlace}. Next reset in {resetTime}.");
+
+                    await Task.Delay(resetTime, cancellationToken);
+                    continue;
+                }
+
+                // p output doesn't really matter, because I don't care really
+                _logger.LogInformation($"Claimed pokemon in {logPlace}.");
+
+                await Task.Delay(TimeSpan.FromHours(options.PokemonWaitHours), cancellationToken);
+            }
+        }
+
+        async Task RunDailyVoteAsync(IMessageChannel channel, CancellationToken cancellationToken = default)
+        {
+            var logPlace = $"channel '{channel.Name}' ({channel.Id})";
+
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                var options = _options.CurrentValue;
+
+                if (!options.DailyVoteEnabled)
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(15), cancellationToken);
+                    continue;
+                }
+
+                IUserMessage response;
+
+                try
+                {
+                    using (channel.Typing())
+                    {
+                        await Task.Delay(TimeSpan.FromSeconds(options.TypingDelaySeconds), cancellationToken);
+
+                        response = await _commandHandler.SendAsync(channel, options.DailyVoteCommand, cancellationToken);
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.LogWarning(e, $"Could not roll daily vote in {logPlace}.");
+
+                    await Task.Delay(TimeSpan.FromMinutes(15), cancellationToken);
+                    continue;
+                }
+
+                if (_outputParser.TryParseTime(response.Content, out var resetTime))
+                {
+                    _logger.LogInformation($"Could not claim daily vote in {logPlace}. Next reset in {resetTime}.");
+
+                    await Task.Delay(resetTime, cancellationToken);
+                    continue;
+                }
+
+                // daily output doesn't really matter, because we'll have to wait a day anyway
+                _logger.LogInformation($"Claimed daily vote in {logPlace}.");
+
+                await Task.Delay(TimeSpan.FromHours(options.DailyVoteWaitHours), cancellationToken);
             }
         }
     }

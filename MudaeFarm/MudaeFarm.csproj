@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
@@ -12,6 +12,7 @@
         <Copyright>Copyright (C) chiya.dev 2018-2020</Copyright>
         <PackageProjectUrl>https://github.com/chiyadev/MudaeFarm</PackageProjectUrl>
         <RepositoryUrl>https://github.com/chiyadev/MudaeFarm</RepositoryUrl>
+        <AssemblyName>MudaeFarmLight</AssemblyName>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)' == 'Release'">
@@ -23,7 +24,13 @@
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
       <PlatformTarget>AnyCPU</PlatformTarget>
       <OutputPath></OutputPath>
-      <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
+      <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+      <WarningLevel>0</WarningLevel>
+      <PlatformTarget>x64</PlatformTarget>
+      <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     </PropertyGroup>
 
     <ItemGroup>
